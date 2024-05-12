@@ -95,7 +95,9 @@ class HomeScreen extends StatelessWidget {
                   actions: [
                     if (isCompact) ...[
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          routes.push(const RatesRoute());
+                        },
                         icon: Icon(
                           Icons.currency_exchange_sharp,
                           color: context.colorScheme.onBackground,
@@ -105,7 +107,9 @@ class HomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            routes.push(const RatesRoute());
+                          },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

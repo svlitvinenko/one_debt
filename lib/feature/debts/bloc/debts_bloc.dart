@@ -5,14 +5,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:one_debt/core/dependencies/dependencies.dart';
-import 'package:one_debt/core/interactor/contacts.dart';
-import 'package:one_debt/core/interactor/currency.dart';
-import 'package:one_debt/core/interactor/debts.dart';
+import 'package:one_debt/core/interactor/auth.dart';
 import 'package:one_debt/core/interactor/rates.dart';
 import 'package:one_debt/core/model/d_contact.dart';
 import 'package:one_debt/core/model/d_debt.dart';
 import 'package:one_debt/core/model/d_debt_summary.dart';
 import 'package:one_debt/core/model/d_money.dart';
+import 'package:one_debt/core/model/d_user.dart';
 import 'package:one_debt/core/model/e_debt_status.dart';
 import 'package:one_debt/core/model/e_debt_type.dart';
 
@@ -34,9 +33,7 @@ class DebtsBloc extends Bloc<DebtsEvent, DebtsState> {
   final EDebtType type;
   DebtsBloc({required this.type}) : super(const DebtsState.loading()) {
     getDependency<Rates>().addListener(_onDataUpdated);
-    getDependency<Contacts>().addListener(_onDataUpdated);
-    getDependency<Debts>().addListener(_onDataUpdated);
-    getDependency<Currency>().addListener(_onDataUpdated);
+    getDependency<Auth>().addListener(_onDataUpdated);
     on<_Initialize>(_onInitialize, transformer: restartable());
   }
 
@@ -45,10 +42,15 @@ class DebtsBloc extends Bloc<DebtsEvent, DebtsState> {
     Emitter<DebtsState> emit,
   ) async {
     emit(const DebtsState.idle(isLoading: true));
-    final List<DDebt>? debts = getDependency<Debts>().value?.ofType(type);
-    if (debts == null) return;
+    final DUser? user = getDependency<Auth>().user;
+    if (user == null) return;
 
-    final String localCurrency = getDependency<Currency>().value;
+    final List<DDebt> debts = switch (type) {
+      EDebtType.incoming => user.incomingDebts,
+      EDebtType.outgoing => user.outgoingDebts,
+    };
+
+    final String localCurrency = user.currency;
 
     final List<DDebtSummary> summary = List.empty(growable: true);
 
@@ -57,9 +59,9 @@ class DebtsBloc extends Bloc<DebtsEvent, DebtsState> {
       final DMoney? localAmount = getDependency<Rates>().convert(debt.amount, localCurrency);
       if (localAmount == null) continue;
       final DDebt localCurrencyDebt = debt.copyWith(amount: localAmount);
-      final DContact? contact = getDependency<Contacts>().value.firstWhereOrNull(
-            (element) => element.id == debt.contactId,
-          );
+      final DContact? contact = user.contacts.firstWhereOrNull(
+        (element) => element.id == debt.contactId,
+      );
       if (contact == null) continue;
 
       final EDebtStatus status = localCurrencyDebt.status;
@@ -85,9 +87,7 @@ class DebtsBloc extends Bloc<DebtsEvent, DebtsState> {
   @override
   Future<void> close() {
     getDependency<Rates>().removeListener(_onDataUpdated);
-    getDependency<Contacts>().removeListener(_onDataUpdated);
-    getDependency<Debts>().removeListener(_onDataUpdated);
-    getDependency<Currency>().removeListener(_onDataUpdated);
+    getDependency<Auth>().removeListener(_onDataUpdated);
     return super.close();
   }
 

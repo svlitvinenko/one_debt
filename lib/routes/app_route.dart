@@ -26,6 +26,13 @@ class ContactsRoute extends AppRoute {
   String get route => '/contact';
 }
 
+class RatesRoute extends AppRoute {
+  const RatesRoute() : super();
+
+  @override
+  String get route => '/rates';
+}
+
 class ProfileRoute extends AppRoute {
   const ProfileRoute() : super();
 

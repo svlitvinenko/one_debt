@@ -5,16 +5,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:one_debt/core/dependencies/dependencies.dart';
-import 'package:one_debt/core/interactor/contacts.dart';
-import 'package:one_debt/core/interactor/currency.dart';
-import 'package:one_debt/core/interactor/debts.dart';
+import 'package:one_debt/core/interactor/auth.dart';
 import 'package:one_debt/core/interactor/rates.dart';
 import 'package:one_debt/core/model/d_contact.dart';
 import 'package:one_debt/core/model/d_contact_summary.dart';
 import 'package:one_debt/core/model/d_debt.dart';
-import 'package:one_debt/core/model/d_debts.dart';
 import 'package:one_debt/core/model/d_money.dart';
 import 'package:one_debt/core/model/d_rates.dart';
+import 'package:one_debt/core/model/d_user.dart';
 
 part 'home_contacts_bloc.freezed.dart';
 
@@ -32,9 +30,7 @@ class HomeContactsState with _$HomeContactsState {
 class HomeContactsBloc extends Bloc<HomeContactsEvent, HomeContactsState> {
   HomeContactsBloc() : super(const HomeContactsState.loading()) {
     getDependency<Rates>().addListener(_onDataUpdated);
-    getDependency<Contacts>().addListener(_onDataUpdated);
-    getDependency<Debts>().addListener(_onDataUpdated);
-    getDependency<Currency>().addListener(_onDataUpdated);
+    getDependency<Auth>().addListener(_onDataUpdated);
     on<_Initialize>(_onInitialize, transformer: restartable());
   }
 
@@ -42,19 +38,19 @@ class HomeContactsBloc extends Bloc<HomeContactsEvent, HomeContactsState> {
     _Initialize event,
     Emitter<HomeContactsState> emit,
   ) async {
-    final List<DContact> contacts = getDependency<Contacts>().value;
+    final List<DContact> contacts = getDependency<Auth>().user?.contacts ?? [];
+    final DUser? user = getDependency<Auth>().user;
     final DRates? rates = getDependency<Rates>().value;
-    final DDebts? debts = getDependency<Debts>().value;
-    final String currency = getDependency<Currency>().value;
+    final String currency = getDependency<Auth>().user?.currency ?? 'USD';
 
     if (rates == null) return;
-    if (debts == null) return;
+    if (user == null) return;
 
     final List<DContactSummary> result = List.empty(growable: true);
 
     for (final DContact contact in contacts) {
-      final List<DDebt> incoming = debts.incoming.where((debt) => debt.contactId == contact.id).toList();
-      final List<DDebt> outgoing = debts.outgoing.where((debt) => debt.contactId == contact.id).toList();
+      final List<DDebt> incoming = user.incomingDebts.where((debt) => debt.contactId == contact.id).toList();
+      final List<DDebt> outgoing = user.outgoingDebts.where((debt) => debt.contactId == contact.id).toList();
 
       final List<DDebt> incomingInTargetCurrency = incoming
           .map(
@@ -124,9 +120,7 @@ class HomeContactsBloc extends Bloc<HomeContactsEvent, HomeContactsState> {
   @override
   Future<void> close() {
     getDependency<Rates>().removeListener(_onDataUpdated);
-    getDependency<Contacts>().removeListener(_onDataUpdated);
-    getDependency<Debts>().removeListener(_onDataUpdated);
-    getDependency<Currency>().removeListener(_onDataUpdated);
+    getDependency<Auth>().removeListener(_onDataUpdated);
     return super.close();
   }
 

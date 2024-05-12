@@ -66,7 +66,18 @@ class DebtsDebtTile extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: ClipOval(
-                              child: Image.network(summary.contact.avatarUrl),
+                              child: Builder(
+                                builder: (context) {
+                                  final String? url = summary.contact.avatarUrl;
+                                  if (url != null) {
+                                    return Image.network(url);
+                                  } else {
+                                    return Container(
+                                      color: context.colorScheme.primary,
+                                    );
+                                  }
+                                },
+                              ),
                             ),
                           ),
                         ),

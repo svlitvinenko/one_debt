@@ -33,11 +33,12 @@ dependencies:
   lottie: ^3.1.0
   shared_preferences: ^2.2.2
   staggered_grid_view_flutter: ^0.0.4
-  uuid: ^4.3.3
+  uuid: ^4.4.0
   url_strategy: ^0.2.0
   firebase_core: ^2.31.0
   firebase_auth: ^4.19.5
   package_info_plus: ^8.0.0
+  cloud_firestore: ^4.17.3
 
 dev_dependencies:
   flutter_test:

@@ -56,7 +56,18 @@ class HomeContactsSection extends StatelessWidget {
                                             child: Card(
                                               shape: const CircleBorder(),
                                               clipBehavior: Clip.hardEdge,
-                                              child: Image.network(summary.contact.avatarUrl),
+                                              child: Builder(
+                                                builder: (context) {
+                                                  final String? url = summary.contact.avatarUrl;
+                                                  if (url != null) {
+                                                    return Image.network(url);
+                                                  } else {
+                                                    return Container(
+                                                      color: context.colorScheme.primary,
+                                                    );
+                                                  }
+                                                },
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(width: 8),
@@ -92,7 +103,18 @@ class HomeContactsSection extends StatelessWidget {
                                           child: Card(
                                             shape: const CircleBorder(),
                                             clipBehavior: Clip.hardEdge,
-                                            child: Image.network(summary.contact.avatarUrl),
+                                            child: Builder(
+                                              builder: (context) {
+                                                final String? url = summary.contact.avatarUrl;
+                                                if (url != null) {
+                                                  return Image.network(url);
+                                                } else {
+                                                  return Container(
+                                                    color: context.colorScheme.primary,
+                                                  );
+                                                }
+                                              },
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 8),

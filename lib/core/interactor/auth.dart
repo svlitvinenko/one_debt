@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:one_debt/core/dependencies/dependencies.dart';
@@ -10,7 +13,9 @@ import 'package:one_debt/core/util/public_notifier.dart';
 import 'package:one_debt/routes/app_route.dart';
 
 class Auth extends Interactor<DAuthState?> {
-  final FirebaseAuth firebase;
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _userDataSubscription;
   @override
   final ValueNotifier<DAuthState?> model;
 
@@ -22,20 +27,20 @@ class Auth extends Interactor<DAuthState?> {
 
   final PublicNotifier dataResetTrigger = PublicNotifier();
 
-  Auth({required this.firebase}) : model = ValueNotifier(null);
+  Auth({required this.auth, required this.firestore}) : model = ValueNotifier(null);
 
   @override
   Future<void> initialize() async {
     await Future.delayed(const Duration(milliseconds: 100));
-    firebase.authStateChanges().listen(_onAuthStateChanged);
-    firebase.userChanges().listen(_onUserChanged);
-    _onAuthStateChanged(firebase.currentUser);
-    _onUserChanged(firebase.currentUser);
+    auth.authStateChanges().listen(_onAuthStateChanged);
+    auth.userChanges().listen(_onUserChanged);
+    _onAuthStateChanged(auth.currentUser);
+    _onUserChanged(auth.currentUser);
   }
 
   Future<DSignInResult> signIn(String email, String password) async {
     try {
-      await firebase.signInWithEmailAndPassword(
+      await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -61,11 +66,11 @@ class Auth extends Interactor<DAuthState?> {
 
   Future<DSignUpResult> signUp(String email, String password, String name) async {
     try {
-      await firebase.createUserWithEmailAndPassword(
+      await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      await firebase.currentUser?.updateDisplayName(name);
+      await auth.currentUser?.updateDisplayName(name);
       return SuccessSignUpResult();
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -85,7 +90,7 @@ class Auth extends Interactor<DAuthState?> {
   }
 
   Future<void> signOut() async {
-    await firebase.signOut();
+    await auth.signOut();
     value = null;
     dataResetTrigger.notify();
   }
@@ -93,33 +98,53 @@ class Auth extends Interactor<DAuthState?> {
   @override
   bool get isInitialized => model.value != null;
 
+  DUser? get user => value?.mapOrNull(authorized: (value) => value.user);
+
   @override
   Future<void> clear() async {
     value = null;
   }
 
-  void _onAuthStateChanged(User? user) {
+  Future<void> _onAuthStateChanged(User? user) async {
     if (user != null) {
-
-      model.value = DAuthState.authorized(
-          user: DUser(
-        id: user.uid,
-        name: user.displayName ?? '',
-      ));
     } else {
       model.value = const DAuthState.unauthorized();
       routes.replaceAll(const AuthenticationRoute());
     }
   }
 
-  void _onUserChanged(User? user) {
+  Future<void> _onUserChanged(User? user) async {
     if (user != null) {
-      model.value = DAuthState.authorized(
-          user: DUser(
-        id: user.uid,
-        name: user.displayName ?? '',
-      ));
+      _userDataSubscription?.cancel();
+      _userDataSubscription = firestore.collection('users').doc(user.uid).snapshots().listen(_onUserDataChanged);
+    }
+  }
 
+  Future<void> _onUserDataChanged(DocumentSnapshot<Map<String, dynamic>> snapshot) async {
+    final User? firebaseUser = auth.currentUser;
+    if (firebaseUser == null) return;
+
+    final Map<String, dynamic>? data = snapshot.data();
+    if (data == null) {
+      final DUser user = DUser(
+        id: snapshot.id,
+        name: firebaseUser.displayName ?? '',
+        currency: 'USD',
+        contacts: [],
+        incomingDebts: [],
+        outgoingDebts: [],
+      );
+      await firestore.collection('users').doc(user.id).set(
+            user.toJson(),
+            SetOptions(merge: true),
+          );
+      value = DAuthState.authorized(user: user);
+    } else {
+      final DUser user = DUser.fromJson(data).copyWith(
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName ?? '',
+      );
+      value = DAuthState.authorized(user: user);
     }
   }
 }

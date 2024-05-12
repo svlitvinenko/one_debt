@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:one_debt/core/dependencies/dependencies.dart';
 import 'package:one_debt/core/design/components/ds_card.dart';
 import 'package:one_debt/core/design/components/ds_debt_type_theme.dart';
-import 'package:one_debt/core/interactor/debts.dart';
+import 'package:one_debt/core/interactor/auth.dart';
 import 'package:one_debt/core/localization/generated/app_localizations.dart';
-import 'package:one_debt/core/model/d_debts.dart';
+import 'package:one_debt/core/model/d_auth_state.dart';
+import 'package:one_debt/core/model/d_user.dart';
 import 'package:one_debt/core/model/e_debt_type.dart';
 
 class HomeDebtsSection extends StatelessWidget {
@@ -31,15 +32,16 @@ class HomeDebtsSection extends StatelessWidget {
             },
           ),
           onTap: onTap,
-          child: ValueListenableBuilder<DDebts?>(
-            valueListenable: getDependency<Debts>().model,
-            builder: (context, model, _) {
-              if (model == null) {
+          child: ValueListenableBuilder<DAuthState?>(
+            valueListenable: getDependency<Auth>().model,
+            builder: (context, state, _) {
+              final DUser? user = getDependency<Auth>().user;
+              if (user == null) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
-              return Text(model.ofType(type).length.toString());
+              return Text(user.debtsOfType(type).length.toString());
             },
           ),
         );

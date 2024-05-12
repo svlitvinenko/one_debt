@@ -8,6 +8,7 @@ import 'package:one_debt/feature/debt/screens/debt_screen.dart';
 import 'package:one_debt/feature/debts/screens/debts_screen.dart';
 import 'package:one_debt/feature/home/screens/home_screen.dart';
 import 'package:one_debt/feature/profile/screens/profile_screen.dart';
+import 'package:one_debt/feature/rates/screens/rates_screen.dart';
 
 sealed class AppRouteMatcher {
   const AppRouteMatcher();
@@ -22,6 +23,7 @@ sealed class AppRouteMatcher {
     DebtRouteMatcher(),
     ContactsRouteMatcher(),
     ProfileRouteMatcher(),
+    RatesRouteMatcher(),
   ];
 
   static AppRouteMatcher? find(RouteSettings settings) {
@@ -80,6 +82,24 @@ class ContactsRouteMatcher extends AppRouteMatcher {
   @override
   String getTitle(RouteSettings settings, AppLocalizations localizations) {
     return 'Contacts';
+  }
+}
+
+class RatesRouteMatcher extends AppRouteMatcher {
+  const RatesRouteMatcher() : super();
+  @override
+  bool matches(RouteSettings settings) {
+    return settings.name == '/rates';
+  }
+
+  @override
+  Widget provide(RouteSettings settings) {
+    return const RatesScreen();
+  }
+
+  @override
+  String getTitle(RouteSettings settings, AppLocalizations localizations) {
+    return 'Currency rates';
   }
 }
 
