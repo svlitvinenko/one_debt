@@ -1,26 +1,29 @@
 import 'package:collection/collection.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:one_debt/core/dependencies/dependencies.dart';
 import 'package:one_debt/core/interactor/interactor.dart';
 import 'package:one_debt/core/model/d_money.dart';
 import 'package:one_debt/core/model/d_rate.dart';
 import 'package:one_debt/core/model/d_rates.dart';
+import 'package:one_debt/core/network/rates_network_service.dart';
 
 class Rates extends Interactor<DRates?> {
+  final RatesNetworkService _service;
   @override
   final ValueNotifier<DRates?> model;
 
-  Rates() : model = ValueNotifier(null);
+  Rates({required RatesNetworkService service})
+      : model = ValueNotifier(null),
+        _service = service;
 
   @override
   Future<void> initialize() async {
-    model.value = const DRates(
-      rates: [
-        DRate(isoCode: 'USD', toUsd: 1),
-        DRate(isoCode: 'RUB', toUsd: 97.1),
-        DRate(isoCode: 'ARS', toUsd: 1024.67),
-        DRate(isoCode: 'TRY', toUsd: 33.21),
-      ],
-    );
+    try {
+      value = await _service.getRatesToUsd();
+    } catch (e) {
+      logger.e('Could not load rates', error: e);
+    }
   }
 
   @override

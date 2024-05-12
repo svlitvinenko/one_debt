@@ -95,8 +95,8 @@ class _DSCardState extends State<DSCard> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 16),
                           if (widget.onTap != null && widget.isTappableChevronEnabled) ...[
+                            const SizedBox(width: 16),
                             Icon(
                               Icons.chevron_right_sharp,
                               size: 24,

@@ -6,10 +6,8 @@ import 'package:one_debt/core/design/components/ds_app_bar.dart';
 import 'package:one_debt/core/design/components/ds_scaffold.dart';
 import 'package:one_debt/core/design/theme/theme.dart';
 import 'package:one_debt/core/interactor/auth.dart';
-import 'package:one_debt/core/interactor/bootstrap.dart';
 import 'package:one_debt/core/model/d_auth_state.dart';
 import 'package:one_debt/core/model/d_user.dart';
-import 'package:one_debt/core/model/e_bootstrap_state.dart';
 import 'package:one_debt/core/model/e_debt_type.dart';
 import 'package:one_debt/feature/home/model/ui/home_tip_model.dart';
 import 'package:one_debt/feature/home/section/contacts/widgets/home_contacts_section.dart';
@@ -27,10 +25,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<EBootstrapState>(
-        valueListenable: getDependency<Bootstrap>(),
+    return ValueListenableBuilder<DAuthState?>(
+        valueListenable: getDependency<Auth>(),
         builder: (context, bootstrapState, _) {
-          if (bootstrapState != EBootstrapState.loaded) {
+          if (!getDependency<Auth>().isSignedIn) {
             return const Center(
               child: CircularProgressIndicator(),
             );

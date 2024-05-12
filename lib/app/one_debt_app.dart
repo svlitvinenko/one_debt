@@ -6,10 +6,10 @@ import 'package:one_debt/core/design/theme/color_scheme.dart';
 import 'package:one_debt/core/design/theme/theme.dart';
 import 'package:one_debt/core/localization/bloc/localization_bloc.dart';
 import 'package:one_debt/core/localization/generated/app_localizations.dart';
-import 'package:one_debt/feature/authentication/bloc/authentication_bloc.dart';
 import 'package:one_debt/routes/app_route.dart';
 import 'package:one_debt/routes/routes.dart';
 import 'package:one_debt/routes/router.dart';
+import 'package:one_debt/routes/title_navigator_observer.dart';
 
 class OneDebtApp extends StatelessWidget {
   const OneDebtApp({super.key});
@@ -20,7 +20,6 @@ class OneDebtApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => ThemeBloc(getDependency())..add(const ThemeEvent.initialized())),
         BlocProvider(create: (_) => LocalizationBloc(getDependency())..add(const LocalizationEvent.initialized())),
-        BlocProvider(create: (_) => AuthenticationBloc()..add(const AuthenticationEvent.initialized())),
       ],
       child: BlocBuilder<LocalizationBloc, LocalizationState>(
         builder: (context, localeState) {
@@ -38,6 +37,9 @@ class OneDebtApp extends StatelessWidget {
                 navigatorKey: getDependency<Routes>().navigatorKey,
                 initialRoute: const HomeRoute().route,
                 onGenerateRoute: generateRoute,
+                navigatorObservers: [
+                  TitleNavigatorObserver(),
+                ],
               );
             },
           );

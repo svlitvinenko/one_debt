@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:one_debt/core/localization/generated/app_localizations.dart';
 import 'package:one_debt/core/model/e_debt_type.dart';
 import 'package:one_debt/feature/authentication/authentication_screen.dart';
 import 'package:one_debt/feature/contacts/screens/contacts_screen.dart';
@@ -12,6 +13,7 @@ sealed class AppRouteMatcher {
   const AppRouteMatcher();
   bool matches(RouteSettings settings);
   Widget provide(RouteSettings settings);
+  String getTitle(RouteSettings settings, AppLocalizations localizations);
 
   static const List<AppRouteMatcher> _matchers = [
     AuthenticationRouteMatcher(),
@@ -38,6 +40,11 @@ class AuthenticationRouteMatcher extends AppRouteMatcher {
   Widget provide(RouteSettings settings) {
     return const AuthenticationScreen();
   }
+
+  @override
+  String getTitle(RouteSettings settings, AppLocalizations localizations) {
+    return 'Sign in';
+  }
 }
 
 class HomeRouteMatcher extends AppRouteMatcher {
@@ -50,6 +57,11 @@ class HomeRouteMatcher extends AppRouteMatcher {
   @override
   Widget provide(RouteSettings settings) {
     return const HomeScreen();
+  }
+
+  @override
+  String getTitle(RouteSettings settings, AppLocalizations localizations) {
+    return 'Home';
   }
 }
 
@@ -64,6 +76,11 @@ class ContactsRouteMatcher extends AppRouteMatcher {
   Widget provide(RouteSettings settings) {
     return const ContactsScreen();
   }
+
+  @override
+  String getTitle(RouteSettings settings, AppLocalizations localizations) {
+    return 'Contacts';
+  }
 }
 
 class ProfileRouteMatcher extends AppRouteMatcher {
@@ -76,6 +93,11 @@ class ProfileRouteMatcher extends AppRouteMatcher {
   @override
   Widget provide(RouteSettings settings) {
     return const ProfileScreen();
+  }
+
+  @override
+  String getTitle(RouteSettings settings, AppLocalizations localizations) {
+    return 'Profile';
   }
 }
 
@@ -103,6 +125,11 @@ class DebtRouteMatcher extends AppRouteMatcher {
     final String id = segments[1];
     return DebtScreen(type: type, id: id);
   }
+
+  @override
+  String getTitle(RouteSettings settings, AppLocalizations localizations) {
+    return 'Debt';
+  }
 }
 
 class DebtsRouteMatcher extends AppRouteMatcher {
@@ -127,5 +154,10 @@ class DebtsRouteMatcher extends AppRouteMatcher {
       _ => throw Exception('invalid route'),
     };
     return DebtsScreen(type: type);
+  }
+
+  @override
+  String getTitle(RouteSettings settings, AppLocalizations localizations) {
+    return 'Debts';
   }
 }

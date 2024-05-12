@@ -8,5 +8,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     return MaterialPageRoute(builder: (context) => const NotFoundScreen());
   }
 
-  return MaterialPageRoute(builder: (context) => matcher.provide(settings), settings: settings);
+  return MaterialPageRoute(
+      builder: (context) {
+        return matcher.provide(settings);
+      },
+      settings: settings);
 }

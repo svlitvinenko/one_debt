@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -9,6 +10,7 @@ import 'package:one_debt/core/interactor/currency.dart';
 import 'package:one_debt/core/interactor/debts.dart';
 import 'package:one_debt/core/interactor/rates.dart';
 import 'package:one_debt/core/network/logging_interceptor.dart';
+import 'package:one_debt/core/network/rates_network_service.dart';
 import 'package:one_debt/firebase_options.dart';
 import 'package:one_debt/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,9 +38,9 @@ Future<void> initializeDependencies() async {
     OneDebtLoggingInterceptor(logger),
   );
   final SharedPreferences preferences = await SharedPreferences.getInstance();
-  final Auth auth = Auth();
+  final Auth auth = Auth(firebase: FirebaseAuth.instance);
   final Debts debts = Debts();
-  final Rates rates = Rates();
+  final Rates rates = Rates(service: RatesNetworkService(dio: dio));
   final Contacts contacts = Contacts();
   final Currency currency = Currency();
   final Bootstrap bootstrap = Bootstrap(auth: auth, interactors: [auth, rates, contacts, debts, currency]);

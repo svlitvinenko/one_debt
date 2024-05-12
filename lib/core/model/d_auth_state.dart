@@ -6,5 +6,6 @@ part 'd_auth_state.freezed.dart';
 @freezed
 class DAuthState with _$DAuthState {
   const factory DAuthState.unauthorized() = Unauthorized;
+  const factory DAuthState.signingUp({required String email, required String password}) = SigningUp;
   const factory DAuthState.authorized({required DUser user}) = Authorized;
 }
