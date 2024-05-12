@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "458282755207",
+    "project_id": "one-debt-99ead",
+    "storage_bucket": "one-debt-99ead.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458282755207:android:34aa42ded52dcb83d08422",
+        "android_client_info": {
+          "package_name": "dev.svlit.debt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAy0NDMPuL2X5smtZW0NoSxa4tDoWefzg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
