@@ -35,6 +35,7 @@ dependencies:
   staggered_grid_view_flutter: ^0.0.4
   uuid: ^4.3.3
   url_strategy: ^0.2.0
+  firebase_core: ^2.31.0
 
 dev_dependencies:
   flutter_test:
