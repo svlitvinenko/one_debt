@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:one_debt/core/dependencies/dependencies.dart';
 import 'package:one_debt/core/design/components/ds_card.dart';
@@ -84,6 +85,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               isLoadingController.value = state.isLoading;
             },
             showAuthenticateSuccess: (state) {
+              TextInput.finishAutofillContext(shouldSave: true);
               routes.replaceAll(const HomeRoute());
             },
             showWrongCredentialsFailure: (state) {
@@ -128,192 +130,199 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     child: SizedBox(
                       width: 300,
                       height: 300,
-                      child: DSCard(
-                        title: IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Sign in',
-                                  style: context.textTheme.titleLarge,
+                      child: AutofillGroup(
+                        child: DSCard(
+                          title: IntrinsicHeight(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Sign in',
+                                    style: context.textTheme.titleLarge,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                              ValueListenableBuilder<bool>(
-                                  valueListenable: isLoadingController,
-                                  builder: (context, isLoading, _) {
-                                    return ValueListenableBuilder<bool>(
-                                      valueListenable: isSignUpModeController,
-                                      builder: (context, isSignUpMode, _) {
-                                        final bool isEnabled = !isLoading;
-                                        return TextButton(
-                                          onPressed: !isEnabled
-                                              ? null
-                                              : isSignUpMode
-                                                  ? () {
-                                                      isSignUpModeController.value = false;
-                                                    }
-                                                  : () {
-                                                      isSignUpModeController.value = true;
-                                                    },
-                                          child: Text(
-                                            isSignUpMode ? 'Sign in instead' : 'Sign up instead',
-                                            style: context.textTheme.labelMedium,
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }),
-                            ],
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ValueListenableBuilder<bool>(
-                                valueListenable: isLoadingController,
-                                builder: (context, isLoading, _) {
-                                  final bool isEnabled = !isLoading;
-                                  return ValueListenableBuilder<String?>(
-                                    valueListenable: emailErrorController,
-                                    builder: (context, error, _) {
-                                      return TextField(
-                                        enabled: isEnabled,
-                                        controller: emailTextController,
-                                        textInputAction: TextInputAction.next,
-                                        decoration: InputDecoration(
-                                          labelText: 'Email',
-                                          errorMaxLines: 2,
-                                          errorText: error,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                }),
-                            const SizedBox(height: 8),
-                            ValueListenableBuilder<bool>(
-                                valueListenable: isSignUpModeController,
-                                builder: (context, isSignUpMode, _) {
-                                  return ValueListenableBuilder<bool>(
-                                      valueListenable: isLoadingController,
-                                      builder: (context, isLoading, _) {
-                                        final bool isEnabled = !isLoading;
-                                        return ValueListenableBuilder<String?>(
-                                          valueListenable: passwordErrorController,
-                                          builder: (context, error, _) {
-                                            return TextField(
-                                              enabled: isEnabled,
-                                              textInputAction:
-                                                  isSignUpMode ? TextInputAction.next : TextInputAction.done,
-                                              keyboardType: TextInputType.visiblePassword,
-                                              obscureText: true,
-                                              controller: passwordTextController,
-                                              onSubmitted: isSignUpMode ? null : (_) => onSignInPressed(context),
-                                              decoration: InputDecoration(
-                                                labelText: 'Password',
-                                                errorMaxLines: 2,
-                                                errorText: error,
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      });
-                                }),
-                            ValueListenableBuilder<bool>(
-                                valueListenable: isLoadingController,
-                                builder: (context, isLoading, _) {
-                                  return ValueListenableBuilder<bool>(
-                                      valueListenable: isSignUpModeController,
-                                      builder: (context, isSignUpMode, _) {
-                                        return AnimatedOpacity(
-                                          opacity: isSignUpMode ? 1.00 : 0.00,
-                                          duration: context.times.fastest,
-                                          child: AnimatedSize(
-                                            key: const ValueKey('name_section'),
-                                            duration: context.times.fastest,
-                                            alignment: Alignment.topCenter,
-                                            curve: Curves.easeOutCubic,
-                                            child: isSignUpMode
-                                                ? Column(
-                                                    key: const ValueKey('name_shown'),
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                    children: [
-                                                      const SizedBox(height: 8),
-                                                      ValueListenableBuilder<bool>(
-                                                        valueListenable: isSignUpModeController,
-                                                        builder: (context, isSignUpMode, _) {
-                                                          return ValueListenableBuilder<String?>(
-                                                            valueListenable: nameErrorController,
-                                                            builder: (context, error, _) {
-                                                              final bool isEnabled = isSignUpMode && !isLoading;
-                                                              return TextField(
-                                                                enabled: isEnabled,
-                                                                controller: nameTextController,
-                                                                textInputAction: TextInputAction.done,
-                                                                onSubmitted: (_) => onSignUpPressed(context),
-                                                                decoration: InputDecoration(
-                                                                  labelText: 'Display name',
-                                                                  errorMaxLines: 2,
-                                                                  errorText: error,
-                                                                ),
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
-                                                    ],
-                                                  )
-                                                : const Column(
-                                                    key: ValueKey('name_hidden'),
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                    children: [
-                                                      SizedBox.shrink(),
-                                                    ],
-                                                  ),
-                                          ),
-                                        );
-                                      });
-                                }),
-                            const Spacer(),
-                            const SizedBox(height: 16),
-                            ListenableBuilder(
-                              listenable: Listenable.merge([
-                                emailErrorController,
-                                passwordErrorController,
-                                nameErrorController,
-                              ]),
-                              builder: (context, child) {
-                                return ValueListenableBuilder<bool>(
+                                const SizedBox(width: 16),
+                                ValueListenableBuilder<bool>(
                                     valueListenable: isLoadingController,
                                     builder: (context, isLoading, _) {
                                       return ValueListenableBuilder<bool>(
                                         valueListenable: isSignUpModeController,
                                         builder: (context, isSignUpMode, _) {
-                                          final bool isEnabled = !isLoading &&
-                                              emailErrorController.value == null &&
-                                              passwordErrorController.value == null &&
-                                              (!isSignUpMode || nameErrorController.value == null);
-                                          return FilledButton(
-                                            onPressed: isEnabled
-                                                ? () {
-                                                    if (isSignUpMode) {
-                                                      onSignUpPressed(context);
-                                                    } else {
-                                                      onSignInPressed(context);
-                                                    }
-                                                  }
-                                                : null,
-                                            child: Text(isSignUpMode ? 'Sign up' : 'Sign in'),
+                                          final bool isEnabled = !isLoading;
+                                          return TextButton(
+                                            onPressed: !isEnabled
+                                                ? null
+                                                : isSignUpMode
+                                                    ? () {
+                                                        isSignUpModeController.value = false;
+                                                      }
+                                                    : () {
+                                                        isSignUpModeController.value = true;
+                                                      },
+                                            child: Text(
+                                              isSignUpMode ? 'Sign in instead' : 'Sign up instead',
+                                              style: context.textTheme.labelMedium,
+                                            ),
                                           );
                                         },
                                       );
-                                    });
-                              },
+                                    }),
+                              ],
                             ),
-                          ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ValueListenableBuilder<bool>(
+                                  valueListenable: isLoadingController,
+                                  builder: (context, isLoading, _) {
+                                    final bool isEnabled = !isLoading;
+                                    return ValueListenableBuilder<String?>(
+                                      valueListenable: emailErrorController,
+                                      builder: (context, error, _) {
+                                        return TextField(
+                                          autofillHints: const [AutofillHints.email],
+                                          enabled: isEnabled,
+                                          controller: emailTextController,
+                                          textInputAction: TextInputAction.next,
+                                          decoration: InputDecoration(
+                                            labelText: 'Email',
+                                            errorMaxLines: 2,
+                                            errorText: error,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }),
+                              const SizedBox(height: 8),
+                              ValueListenableBuilder<bool>(
+                                  valueListenable: isSignUpModeController,
+                                  builder: (context, isSignUpMode, _) {
+                                    return ValueListenableBuilder<bool>(
+                                        valueListenable: isLoadingController,
+                                        builder: (context, isLoading, _) {
+                                          final bool isEnabled = !isLoading;
+                                          return ValueListenableBuilder<String?>(
+                                            valueListenable: passwordErrorController,
+                                            builder: (context, error, _) {
+                                              return TextField(
+                                                autofillHints: [
+                                                  isSignUpMode ? AutofillHints.newPassword : AutofillHints.password
+                                                ],
+                                                enabled: isEnabled,
+                                                textInputAction:
+                                                    isSignUpMode ? TextInputAction.next : TextInputAction.done,
+                                                keyboardType: TextInputType.visiblePassword,
+                                                obscureText: true,
+                                                controller: passwordTextController,
+                                                onSubmitted: isSignUpMode ? null : (_) => onSignInPressed(context),
+                                                decoration: InputDecoration(
+                                                  labelText: 'Password',
+                                                  errorMaxLines: 2,
+                                                  errorText: error,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        });
+                                  }),
+                              ValueListenableBuilder<bool>(
+                                  valueListenable: isLoadingController,
+                                  builder: (context, isLoading, _) {
+                                    return ValueListenableBuilder<bool>(
+                                        valueListenable: isSignUpModeController,
+                                        builder: (context, isSignUpMode, _) {
+                                          return AnimatedOpacity(
+                                            opacity: isSignUpMode ? 1.00 : 0.00,
+                                            duration: context.times.fastest,
+                                            child: AnimatedSize(
+                                              key: const ValueKey('name_section'),
+                                              duration: context.times.fastest,
+                                              alignment: Alignment.topCenter,
+                                              curve: Curves.easeOutCubic,
+                                              child: isSignUpMode
+                                                  ? Column(
+                                                      key: const ValueKey('name_shown'),
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      children: [
+                                                        const SizedBox(height: 8),
+                                                        ValueListenableBuilder<bool>(
+                                                          valueListenable: isSignUpModeController,
+                                                          builder: (context, isSignUpMode, _) {
+                                                            return ValueListenableBuilder<String?>(
+                                                              valueListenable: nameErrorController,
+                                                              builder: (context, error, _) {
+                                                                final bool isEnabled = isSignUpMode && !isLoading;
+                                                                return TextField(
+                                                                  autofillHints: const [AutofillHints.name],
+                                                                  enabled: isEnabled,
+                                                                  controller: nameTextController,
+                                                                  textInputAction: TextInputAction.done,
+                                                                  onSubmitted: (_) => onSignUpPressed(context),
+                                                                  decoration: InputDecoration(
+                                                                    labelText: 'Display name',
+                                                                    errorMaxLines: 2,
+                                                                    errorText: error,
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const Column(
+                                                      key: ValueKey('name_hidden'),
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      children: [
+                                                        SizedBox.shrink(),
+                                                      ],
+                                                    ),
+                                            ),
+                                          );
+                                        });
+                                  }),
+                              const Spacer(),
+                              const SizedBox(height: 16),
+                              ListenableBuilder(
+                                listenable: Listenable.merge([
+                                  emailErrorController,
+                                  passwordErrorController,
+                                  nameErrorController,
+                                ]),
+                                builder: (context, child) {
+                                  return ValueListenableBuilder<bool>(
+                                      valueListenable: isLoadingController,
+                                      builder: (context, isLoading, _) {
+                                        return ValueListenableBuilder<bool>(
+                                          valueListenable: isSignUpModeController,
+                                          builder: (context, isSignUpMode, _) {
+                                            final bool isEnabled = !isLoading &&
+                                                emailErrorController.value == null &&
+                                                passwordErrorController.value == null &&
+                                                (!isSignUpMode || nameErrorController.value == null);
+                                            return FilledButton(
+                                              onPressed: isEnabled
+                                                  ? () {
+                                                      if (isSignUpMode) {
+                                                        onSignUpPressed(context);
+                                                      } else {
+                                                        onSignInPressed(context);
+                                                      }
+                                                    }
+                                                  : null,
+                                              child: Text(isSignUpMode ? 'Sign up' : 'Sign in'),
+                                            );
+                                          },
+                                        );
+                                      });
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

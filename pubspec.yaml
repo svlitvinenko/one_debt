@@ -3,7 +3,7 @@ description: "Debt managing application"
 
 publish_to: "none"
 
-version: 0.0.1+10
+version: 0.0.1+13
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
