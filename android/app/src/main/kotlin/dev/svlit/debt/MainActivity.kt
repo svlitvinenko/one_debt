@@ -1,4 +1,4 @@
-package dev.svlit.one_debt
+package dev.svlit.debt
 
 import io.flutter.embedding.android.FlutterActivity
 
