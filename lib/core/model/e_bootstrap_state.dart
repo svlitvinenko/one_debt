@@ -1,0 +1,4 @@
+enum EBootstrapState {
+  loading,
+  loaded,
+}

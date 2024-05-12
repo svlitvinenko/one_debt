@@ -1,0 +1,49 @@
+name: one_debt
+description: "Debt managing application"
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+
+  cupertino_icons: ^1.0.6
+  animate_do: ^3.3.4
+  bloc_concurrency: ^0.2.5
+  collection: ^1.18.0
+  dio: ^5.4.1
+  flutter_animate: ^4.5.0
+  flutter_bloc: ^8.1.4
+  flutter_svg: ^2.0.10
+  freezed: ^2.4.7
+  freezed_annotation: ^2.4.1
+  get_it: ^7.6.7
+  google_fonts: ^6.2.1
+  http: ^1.2.1
+  intl: ^0.18.1
+  logger: ^2.1.0
+  lottie: ^3.1.0
+  shared_preferences: ^2.2.2
+  staggered_grid_view_flutter: ^0.0.4
+  uuid: ^4.3.3
+  url_strategy: ^0.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.8
+  flutter_gen: ^5.4.0
+  json_serializable: ^6.7.1
+
+flutter:
+  uses-material-design: true
+  generate: true

@@ -1,0 +1,8 @@
+{
+    "@@locale": "en",
+    "title": "OneDebt",
+    "incomingDebtsTitle": "Incoming debts",
+    "outgoingDebtsTitle": "Outgoing debts",
+    "contactsTitle": "Contacts",
+    "profileTitle": "Profile"
+}
