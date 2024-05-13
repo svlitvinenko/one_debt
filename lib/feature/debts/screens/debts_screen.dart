@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:one_debt/core/dependencies/dependencies.dart';
+import 'package:one_debt/core/design/components/ds_adaptive_body.dart';
 import 'package:one_debt/core/design/components/ds_app_bar.dart';
 import 'package:one_debt/core/design/components/ds_debt_type_theme.dart';
 import 'package:one_debt/core/design/components/ds_scaffold.dart';
@@ -9,7 +10,6 @@ import 'package:one_debt/core/model/d_debt_summary.dart';
 import 'package:one_debt/core/model/e_debt_type.dart';
 import 'package:one_debt/feature/debts/bloc/debts_bloc.dart';
 import 'package:one_debt/feature/debts/widgets/debts_debt_tile.dart';
-import 'package:one_debt/feature/home/screens/home_screen.dart';
 import 'package:one_debt/routes/app_route.dart';
 import 'package:one_debt/routes/routes.dart';
 import 'package:staggered_grid_view_flutter/rendering/sliver_staggered_grid.dart';

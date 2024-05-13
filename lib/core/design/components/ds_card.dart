@@ -69,6 +69,7 @@ class _DSCardState extends State<DSCard> {
                 padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     IntrinsicHeight(
                       child: Row(
@@ -107,7 +108,7 @@ class _DSCardState extends State<DSCard> {
                       ),
                     ),
                     if (child != null) ...[
-                      Expanded(child: child),
+                      child,
                     ],
                   ],
                 ),

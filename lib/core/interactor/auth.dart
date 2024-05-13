@@ -147,4 +147,13 @@ class Auth extends Interactor<DAuthState?> {
       value = DAuthState.authorized(user: user);
     }
   }
+
+  Future<void> setCurrency(String isoCode) async {
+    final DUser? user = this.user;
+    if (user == null) return;
+    await firestore.collection('users').doc(user.id).set(
+          user.copyWith(currency: isoCode).toJson(),
+          SetOptions(merge: true),
+        );
+  }
 }

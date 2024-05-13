@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:one_debt/core/design/components/ds_adaptive_body.dart';
 import 'package:one_debt/core/design/components/ds_app_bar.dart';
-import 'package:one_debt/feature/home/screens/home_screen.dart';
 
 class DSScaffold extends StatelessWidget {
   final DSAppBar? appBar;
@@ -26,7 +26,7 @@ class DSScaffold extends StatelessWidget {
           if (body != null)
             Positioned.fill(
               top: 70,
-              child: AdaptiveBody(
+              child: DSAdaptiveBody(
                 builder: (context, constraints, layout) => body.call(context, constraints, layout),
               ),
             ),

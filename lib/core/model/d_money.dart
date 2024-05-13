@@ -17,6 +17,8 @@ class DMoney with _$DMoney {
 
   @override
   String toString() {
-    return '${(cents / 100).toStringAsFixed(2)} $isoCode';
+    return '$formattedNumber $isoCode';
   }
+
+  String get formattedNumber => (cents / 100).toStringAsFixed(2);
 }

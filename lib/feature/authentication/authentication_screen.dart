@@ -129,7 +129,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     alignment: const Alignment(0, 0.5),
                     child: SizedBox(
                       width: 300,
-                      height: 300,
                       child: AutofillGroup(
                         child: DSCard(
                           title: IntrinsicHeight(
@@ -285,7 +284,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                           );
                                         });
                                   }),
-                              const Spacer(),
                               const SizedBox(height: 16),
                               ListenableBuilder(
                                 listenable: Listenable.merge([
